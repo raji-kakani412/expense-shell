@@ -56,7 +56,7 @@ else
     echo -e "Expense user already exists. $Y Skipping ... $N" | tee -a $LOG_FILE
 fi
 
-mkdir -p /app #-p is used avoid error if directory already exists
+mkdir -p /app #-p is used to avoid error if directory already exists
 VALIDATE $? "Creating app folder"
 
 curl -o /tmp/backend.zip https://expense-builds.s3.us-east-1.amazonaws.com/expense-backend-v2.zip &>>$LOG_FILE

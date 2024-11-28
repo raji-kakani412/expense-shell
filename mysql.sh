@@ -37,8 +37,15 @@ echo "script started executing at: $(date)" | tee -a $LOG_FILE
 
 CHECK_ROOT 
 
-dnf install mysql-server -y &>>$LOG_FILE
-VALIDATE $? "Installing MySQL server"
+dnf list installed mysql-server
+if [ $? -ne 0 ]
+then
+    echo "MySQL is not installed. Going to install it.."
+    dnf install mysql-server -y &>>$LOG_FILE
+    VALIDATE $? "Installing MySQL server"
+else
+    echo "MySQL is already installed. Nothing to do.."
+fi
 
 systemctl enable mysqld &>>$LOG_FILE
 VALIDATE $? "Enabled MySQL server"
@@ -46,7 +53,7 @@ VALIDATE $? "Enabled MySQL server"
 systemctl start mysqld &>>$LOG_FILE
 VALIDATE $? "Started MySQL server"
 
-#create mysql.devops-aws.tech r53 record first or update them if already exits
+# create mysql.devops-aws.tech r53 record first or update them if already exits
 mysql -h mysql.devops-aws.tech -u root -pExpenseApp@1 -e 'show databases;' &>>$LOG_FILE
 if [ $? -ne 0 ]
 then
